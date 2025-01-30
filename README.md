@@ -1,3 +1,5 @@
+2320191080 Ömer Talha Alkın
+
 Özel Zafiyet Tarayıcısı, hedef sistemlerdeki güvenlik açıklarını tespit etmek ve değerlendirmek amacıyla kullanılan bir yazılım aracıdır. Bu tür tarayıcılar, ağda bulunan sistemlerdeki çeşitli zafiyetleri bulmak için farklı yöntemler kullanır ve daha sonra bu zafiyetlere dair raporlar üretir. İşte bu yazılımın temel özellikleri ve her birinin ne anlama geldiği:
 
 1. Port Tarama ve Servis Tespiti:
