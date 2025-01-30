@@ -1,0 +1,91 @@
+import socket
+import nmap
+import time
+import json
+
+# Port tarama işlevi
+def port_scan(target_ip):
+    open_ports = []
+    for port in range(1, 65535):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket.setdefaulttimeout(1)
+        result = s.connect_ex((target_ip, port))
+        if result == 0:
+            open_ports.append(port)
+        s.close()
+    return open_ports
+
+# Servis tespiti işlevi (nmap kullanarak)
+def service_detection(target_ip):
+    scanner = nmap.PortScanner()
+    scanner.scan(target_ip, '1-1024')  # Sadece 1-1024 portları taranır
+    return scanner[target_ip].all_protocols(), scanner[target_ip]['tcp']
+
+# Zafiyet veritabanı yönetimi (örnek bir veritabanı)
+vulnerability_db = {
+    "80": "HTTP Service - Vulnerable to XSS",
+    "443": "HTTPS Service - Vulnerable to SSL POODLE",
+    # Bu kısımdı daha fazla güvenlik açığı ile doldurulabilir
+}
+
+# Risk bazlı raporlama
+def risk_based_reporting(open_ports, services):
+    report = {}
+    for port in open_ports:
+        if str(port) in vulnerability_db:
+            report[port] = {
+                "service": services.get(port, "Unknown Service"),
+                "vulnerability": vulnerability_db[str(port)],
+                "risk_level": "High"  # Bu risk seviyesi, daha ayrıntılı algoritmalar ile belirlenebilir
+            }
+        else:
+            report[port] = {
+                "service": services.get(port, "Unknown Service"),
+                "vulnerability": "No known vulnerabilities",
+                "risk_level": "Low"
+            }
+    return report
+
+# Özelleştirilebilir modül geliştirme (örneğin, yeni bir modül eklendiğinde)
+def custom_module(target_ip):
+    # Buraya yeni modüller eklenebilir
+    return f"Custom module scan result for {target_ip}"
+
+# Çıktı dosyasına yazma işlevi
+def write_output_to_file(output_path, data):
+    with open(output_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+# Kullanıcı giriş işlemi
+def main():
+    # Zorunlu parametrelerin alınması
+    target_ip = input("Enter target IP address or range: ")
+    output_path = input("Enter the output file path: ")
+
+    print(f"Scanning {target_ip}...\n")
+
+    # Port tarama
+    open_ports = port_scan(target_ip)
+    print(f"Open ports: {open_ports}\n")
+
+    # Servis tespiti
+    all_protocols, tcp_services = service_detection(target_ip)
+    print(f"Detected services: {tcp_services}\n")
+
+    # Risk bazlı raporlama
+    report = risk_based_reporting(open_ports, tcp_services)
+    print("Risk-based Vulnerability Report:")
+    for port, data in report.items():
+        print(f"Port {port}: {data['service']} - {data['vulnerability']} (Risk: {data['risk_level']})")
+
+    # Özel modül çağrısı
+    print("\nCustom Module Output:")
+    print(custom_module(target_ip))
+
+    # Çıktıyı dosyaya yazma
+    print(f"\nWriting output to {output_path}...")
+    write_output_to_file(output_path, report)
+    print("Output written successfully.")
+
+if __name__ == "__main__":
+    main()
